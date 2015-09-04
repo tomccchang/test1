@@ -1,0 +1,43 @@
+int  FacePipeline::Depth2ColorAlign(PXCImage* ColorFrame, PXCImage* DepthFrame,int i_center, int j_center, int RangeH, int RangeW){
+
+
+		PXCImage::ImageInfo colorInfo={0,0,0};
+		ColorFrame->QueryInfo(&colorInfo);
+		///清空影像
+		memset (DepthBuffer,0,sizeof(unsigned char)*(640*480));
+		memset (DepthDataAlign,0,sizeof(unsigned short)*(640*480));
+
+		int i_min=i_center-RangeH;
+		int i_max=i_center+RangeH;
+		int j_min=j_center-RangeW;
+		int j_max=j_center+RangeW;
+
+		if(i_min<0)
+			i_min=0;
+
+		if(i_max>240)
+			i_max=240;
+
+		if(j_min<0)
+			j_min=0;
+
+		if(j_max>320)
+			j_max=320;
+
+		float A=0,B=0;
+		for(float i=i_min;i<i_max;i++){
+			for(float j=j_min;j<j_max;j++){
+				B=j;
+				A=i;
+				//DepthBuffer[640*int(A)+int(B)]=255;
+				MapXY(B,A,DepthFrame,&colorInfo);
+				//write
+				if(A>=0 && A<480){
+					if(B>=0 && B<640){
+						//DepthBuffer[640*int(B)+int(A)]=255;
+						DepthDataAlign[640*int(A)+int(B)]=DepthData[320*int(i)+int(j)];
+					}}//if A B
+			}}
+
+		return 0;
+}
